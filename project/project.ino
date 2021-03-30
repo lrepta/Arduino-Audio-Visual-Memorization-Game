@@ -29,6 +29,11 @@ int level = 1;
 void setup() {
     pinMode(shortLEDPin, OUTPUT);
     pinMode(longLEDPin, OUTPUT);
+
+    pinMode(shortLEDBtn, INPUT);
+    pinMode(longLEDBtn, INPUT);
+    pinMode(shortSoundBtn, INPUT);
+    pinMode(longSoundBtn, INPUT);
   
   Serial.begin(9600);
   while (!Serial) {

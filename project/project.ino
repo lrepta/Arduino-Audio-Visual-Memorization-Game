@@ -1,5 +1,7 @@
-// Names - UIN's
-// Luke Repta - 660073273
+// Names:
+// Luke Repta
+// Timothy Jang
+// Aleksandar Kartelyan
 // 
 // Title - 
 // Description: 
@@ -22,7 +24,7 @@ const int longSoundBtn = 8;
 const int softwareRXPin = 11;
 const int softwareTXPin = 12;
 
-SoftwareSerial softSerial(softwareRXPin, softwareTXPin); 
+SoftwareSerial softSerial(softwareRXPin, softwareTXPin); // RX, TX
 
 int level = 1;
 

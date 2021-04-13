@@ -18,8 +18,11 @@ const int longLEDPin = 4;
 
 const int shortLEDBtn = 5;
 const int longLEDBtn = 6;
+
 const int shortSoundBtn = 7;
 const int longSoundBtn = 8;
+
+const int soundPin = 9;
 
 const int softwareRXPin = 11;
 const int softwareTXPin = 12;
@@ -31,6 +34,8 @@ int level = 1;
 void setup() {
     pinMode(shortLEDPin, OUTPUT);
     pinMode(longLEDPin, OUTPUT);
+
+    pinMode(soundPin, OUTPUT);
 
     pinMode(shortLEDBtn, INPUT);
     pinMode(longLEDBtn, INPUT);
@@ -67,15 +72,27 @@ void generateSequence() {
     switch (level) {
         case 1:
             // statements
+            digitalWrite(shortLEDPin, HIGH);
+            delay(700);
+            digitalWrite(shortLEDPin, LOW);
             break;
         case 2:
             // statements
+            digitalWrite(longLEDPin, HIGH);
+            delay(1700);
+            digitalWrite(longLEDPin, LOW);
             break;
         case 3:
             // statements
+            analogWrite(soundPin, 255);
+            delay(700);
+            analogWrite(soundPin, 0);
             break;
         case 4:
             // statements
+            analogWrite(soundPin, 255);
+            delay(1700);
+            analogWrite(soundPin, 0);
             break;
         case 5:
             // statements

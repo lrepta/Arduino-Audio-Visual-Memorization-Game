@@ -94,6 +94,7 @@ void createSequenceArray() {
 }
 
 void generateSequence() {
+    randomSeed(analogRead(A5));
     int randomLengthAdjuster = random(0, 3);
     sequenceLength = randomLengthAdjuster;
     switch (level) {

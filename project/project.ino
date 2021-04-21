@@ -63,6 +63,10 @@ void setup() {
 // someDataStructure correctSequence;
 // someDataStructure userSequence;
 
+// Sequence array is of max length 15, initialized values to 0 as 1-4 is used for LED/Sound
+int sequenceArray[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+int sequenceLength = 0;
+
 // user sequence is of max length 15, initialized values to 0 as 1-4 is used for LED/Sound
 int userSequence[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 int userSequenceLength = 0;
@@ -72,7 +76,86 @@ int recordInput() {
     // Otherwise we will need another button or something for the user to indicate when
     // they are done entering what they think the sequence is
     int count = 0;
+    long unsigned int prevTime = 0;
+    int prevShortLED = LOW;
+    int prevLongLED = LOW;
+    int prevShortSound = LOW;
+    int prevLongSound = LOW;
+
+    int shortLEDState;
+    int longLEDState;
+    int shortSoundState;
+    int longSoundState;
+
+    // Should also check that sequence is correct
     while(count < 15) {
+        long unsigned int currTime = millis();
+
+        int shortLEDRd = digitalRead(shortSoundBtn);
+        int longLEDRd = digitalRead(longLEDBtn);
+        int shortSoundRd = digitalRead(shortSoundBtn);
+        int longSoundRd = digitalRead(longSoundBtn);
+
+
+        // Implementation of button debouncing based on arduino built-in
+        // example code:
+        // - https://www.arduino.cc/en/Tutorial/BuiltInExamples/Debounce
+        // If the switch changed, due to noise or pressing:
+        if (
+            prevShortLED != shortLEDRd ||
+            prevLongLED != longLEDRd ||
+            prevShortSound != shortSoundRd ||
+            prevLongSound != longSoundRd
+           ) 
+        {
+            // reset the debouncing timer
+            prevTime = millis();
+        }
+
+        if ((millis() - prevTime) > 50) {
+            // whatever the reading is at, it's been there for longer than the debounce
+            // delay, so take it as the actual current state:
+
+            // Check all of the button states, adding them to the
+            // sequence as a valid user input only if the input
+            // has changed since last reading, and the button has been
+            // pressed. Sets the sequence to the equivalent number
+            // representing that input, and updates the counter
+            if (shortLEDRd != shortLEDState) {
+                shortLEDState = shortLEDRd;
+                if (shortLEDState == HIGH) { userSequence[count++] = 1; }
+            }
+            else if (longLEDRd != longLEDState) {
+                longLEDState = longLEDRd;
+                if (longLEDState == HIGH) { userSequence[count++] = 2; }
+            }
+            else if (shortSoundRd != shortSoundState) {
+                shortSoundState = shortSoundRd;
+                if (shortSoundState == HIGH) { userSequence[count++] = 3; }
+            }
+            else if (longSoundRd != longSoundState) {
+                longSoundState = longSoundRd;
+                if (longSoundState == HIGH) { userSequence[count++] = 4; }
+            }
+
+            // Not certain this is where we should be testing for equality
+            if (userSequence[count - 1] != sequenceArray[count - 1]) {
+                // User got sequence wrong, so user input stops being read
+                // and we return 0 to the loop function
+                return 0;
+            } else {
+                userSequenceLength++;
+            }
+        }
+
+        // save the reading. Next time through the loop, it'll be the lastButtonState:
+        //lastButtonState = reading;
+
+        shortLEDState = shortLEDRd;
+        longLEDState = longLEDRd;
+        shortSoundState = shortSoundRd;
+        longSoundState = longSoundRd;
+
         // record user input, with proper debouncing etc
 
         // Check if user pressed short LED button
@@ -101,10 +184,6 @@ int recordInput() {
         }
     }
 }
-
-// Sequence array is of max length 15, initialized values to 0 as 1-4 is used for LED/Sound
-int sequenceArray[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-int sequenceLength = 0;
 
 // Creates the random sequence that the user must repeat
 // Follows the following scheme:

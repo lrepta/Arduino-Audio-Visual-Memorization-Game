@@ -139,6 +139,7 @@ int recordInput() {
             }
 
             // Not certain this is where we should be testing for equality
+            // Also, should ensure that this code never runs on count = 0
             if (userSequence[count - 1] != sequenceArray[count - 1]) {
                 // User got sequence wrong, so user input stops being read
                 // and we return 0 to the loop function
@@ -170,18 +171,24 @@ int recordInput() {
 
         // If we decide to go that route, check if  
         // user pressed submit sequence button
-
-        if (input sequence is still correct) {
-            continue;
-        } else {
-            // Incorrect input
-
-            //reset the userSequence
-            for (int i = 0; i < 15; i++) {
-                userSequence[i] = 0;
-            }
-            return 0;
+        if (userSequenceLength == sequenceLength) {
+            // User correctly inputted the sequence
+            // This is sufficient because we check if each
+            // input is correct before it is added
+            return 1;
         }
+
+        // if (input sequence is still correct) {
+        //     continue;
+        // } else {
+        //     // Incorrect input
+
+        //     //reset the userSequence
+        //     for (int i = 0; i < 15; i++) {
+        //         userSequence[i] = 0;
+        //     }
+        //     return 0;
+        // }
     }
 }
 

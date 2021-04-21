@@ -58,6 +58,7 @@ void setup() {
   }
 
   softSerial.begin(9600);
+  generateSequence();
 }
 
 // someDataStructure correctSequence;
@@ -273,12 +274,12 @@ void displaySequence() {
             case 1:
                 digitalWrite(shortLEDPin, HIGH);
                 // Maybe shouldn't use delay if we still want to do things during this
-                delay(shortLength)
+                delay(shortLength);
                 digitalWrite(shortLEDPin, LOW);
                 break;
             case 2:
                 digitalWrite(longLEDPin, HIGH);
-                delay(longLength)
+                delay(longLength);
                 digitalWrite(longLEDPin, LOW);
                 break;
             case 3:
@@ -299,7 +300,8 @@ void displaySequence() {
 
 void loop() {
     // Lots of repeated code, could be made prettier
-    generateSequence();
+    // generateSequence();
+    displaySequence();
 
   if (level == 1) {
       // This is where the blocking call for recording user input occurs

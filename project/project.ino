@@ -31,9 +31,9 @@ const int softwareTXPin = 12;
 // stimulus shorter and as such harder to remember
 // Possible adjuster if we find even the highest level is too easy
 const int shortLength = 500; // Length of the short flashes/buzzes in milliseconds
-const int longLength = 1000; // Length of the long flashes/buzzes in milliseconds
+const int longLength = 2000; // Length of the long flashes/buzzes in milliseconds
 
-const int soundFrequency = 2000; // Frequency of the buzzer in Hz
+const int soundFrequency = 1000; // Frequency of the buzzer in Hz
 
 SoftwareSerial softSerial(softwareRXPin, softwareTXPin); // RX, TX
 
@@ -73,6 +73,7 @@ int userSequence[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 int userSequenceLength = 0;
 
 int recordInput() {
+    Serial.println("Entered the recordInput function");
     // record input on the buttons until the user enters an incorrect input?
     // Otherwise we will need another button or something for the user to indicate when
     // they are done entering what they think the sequence is
@@ -90,6 +91,7 @@ int recordInput() {
 
     // Should also check that sequence is correct
     while(count < 15) {
+        delay(100);
         long unsigned int currTime = millis();
 
         int shortLEDRd = digitalRead(shortSoundBtn);
@@ -124,28 +126,31 @@ int recordInput() {
             // representing that input, and updates the counter
             if (shortLEDRd != shortLEDState) {
                 shortLEDState = shortLEDRd;
-                if (shortLEDState == HIGH) { userSequence[count++] = 1; }
+                if (shortLEDState == HIGH) { userSequence[count] = 1; }
             }
             else if (longLEDRd != longLEDState) {
                 longLEDState = longLEDRd;
-                if (longLEDState == HIGH) { userSequence[count++] = 2; }
+                if (longLEDState == HIGH) { userSequence[count] = 2; }
             }
             else if (shortSoundRd != shortSoundState) {
                 shortSoundState = shortSoundRd;
-                if (shortSoundState == HIGH) { userSequence[count++] = 3; }
+                if (shortSoundState == HIGH) { userSequence[count] = 3; }
             }
             else if (longSoundRd != longSoundState) {
                 longSoundState = longSoundRd;
-                if (longSoundState == HIGH) { userSequence[count++] = 4; }
+                if (longSoundState == HIGH) { userSequence[count] = 4; }
             }
 
             // Not certain this is where we should be testing for equality
             // Also, should ensure that this code never runs on count = 0
-            if (userSequence[count - 1] != sequenceArray[count - 1]) {
+            if (userSequence[count] != 0 && userSequence[count] != sequenceArray[count]) {
                 // User got sequence wrong, so user input stops being read
                 // and we return 0 to the loop function
+                Serial.println("count is: " + (String)(count) + " user: " + (String)(userSequence[count]) + " correct: " + (String)(sequenceArray[count]));
+                Serial.println("Returning 0 from the recordInput function");
                 return 0;
             } else {
+                count++;
                 userSequenceLength++;
             }
         }
@@ -172,10 +177,11 @@ int recordInput() {
 
         // If we decide to go that route, check if  
         // user pressed submit sequence button
-        if (userSequenceLength == sequenceLength) {
+        if (count == sequenceLength) {
             // User correctly inputted the sequence
             // This is sufficient because we check if each
             // input is correct before it is added
+            Serial.println("Returning 1 from the recordInput function");
             return 1;
         }
 
@@ -201,6 +207,7 @@ int recordInput() {
 // 4 = long Sound buzz
 // 0 is the uninitialized value, and should never be used
 void createSequenceArray() {
+    Serial.println("Entered the createSequencArray function");
     randomSeed(analogRead(A5));
     for (int i = 0; i < sequenceLength; i++) {
         sequenceArray[i] = random(1,4);
@@ -208,6 +215,7 @@ void createSequenceArray() {
 }
 
 void generateSequence() {
+    Serial.println("Entered the generateSequence function");
     randomSeed(analogRead(A5));
     int randomLengthAdjuster = random(0, 3);
     sequenceLength = randomLengthAdjuster;
@@ -215,34 +223,18 @@ void generateSequence() {
         case 1:
             // statements
             sequenceLength += 4;
-
-            digitalWrite(shortLEDPin, HIGH);
-            delay(700);
-            digitalWrite(shortLEDPin, LOW);
             break;
         case 2:
             // statements
             sequenceLength += 6;
-
-            digitalWrite(longLEDPin, HIGH);
-            delay(1700);
-            digitalWrite(longLEDPin, LOW);
             break;
         case 3:
             // statements
             sequenceLength += 8;
-
-            analogWrite(soundPin, 255);
-            delay(700);
-            analogWrite(soundPin, 0);
             break;
         case 4:
             // statements
             sequenceLength += 10;
-
-            analogWrite(soundPin, 255);
-            delay(1700);
-            analogWrite(soundPin, 0);
             break;
         case 5:
             // statements
@@ -254,6 +246,7 @@ void generateSequence() {
             // statements
         break;
     }
+    Serial.println("Sequence length is: " + sequenceLength);
 
     // After the switch statement to get the length of the sequence, generate the sequence
     createSequenceArray();
@@ -266,7 +259,10 @@ void generateSequence() {
 // 3 = short Sound buzz
 // 4 = long Sound buzz
 void displaySequence() {
+    Serial.println("Entered the displaySequence function");
+    Serial.print("Sequence is: ");
     for(int i = 0; i < sequenceLength; i++) {
+        Serial.print((String)sequenceArray[i] + ", ");
         delay(200); // Brief pause in between displaying each element of the sequence
         switch (sequenceArray[i])
         {
@@ -296,9 +292,11 @@ void displaySequence() {
                 break;
         }
     }
+    Serial.println("");
 }
 
 void loop() {
+    Serial.println("In loop function");
     // Lots of repeated code, could be made prettier
     // generateSequence();
     displaySequence();

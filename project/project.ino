@@ -30,7 +30,7 @@ const int softwareTXPin = 12;
 // Could secretely decrement these values as the user advances levels, making each
 // stimulus shorter and as such harder to remember
 // Possible adjuster if we find even the highest level is too easy
-const int shortLength = 500; // Length of the short flashes/buzzes in milliseconds
+const int shortLength = 1000; // Length of the short flashes/buzzes in milliseconds
 const int longLength = 2000; // Length of the long flashes/buzzes in milliseconds
 
 const int soundFrequency = 1000; // Frequency of the buzzer in Hz
@@ -92,10 +92,10 @@ int recordInput() {
     // Should also check that sequence is correct
     Serial.print("userSequence is: ");
     while(count < 15) {
-        delay(100);
+        delay(200);
         long unsigned int currTime = millis();
 
-        int shortLEDRd = digitalRead(shortSoundBtn);
+        int shortLEDRd = digitalRead(shortLEDBtn);
         int longLEDRd = digitalRead(longLEDBtn);
         int shortSoundRd = digitalRead(shortSoundBtn);
         int longSoundRd = digitalRead(longSoundBtn);
@@ -244,7 +244,7 @@ void createSequenceArray() {
     Serial.println("Entered the createSequencArray function");
     randomSeed(analogRead(A5));
     for (int i = 0; i < sequenceLength; i++) {
-        sequenceArray[i] = random(1,4);
+        sequenceArray[i] = random(1,5);
     }
 }
 
@@ -318,10 +318,12 @@ void displaySequence() {
                 break;
             case 3:
                 tone(soundPin, soundFrequency, shortLength);
+                delay(shortLength);
                 // Might need a delay here? I think tone is a blocking call for its length?
                 break;
             case 4:
-                tone(soundPin, soundFrequency, longLength);
+                tone(soundPin, soundFrequency/2, longLength);
+                delay(longLength);
                 // Might need a delay here? I think tone is a blocking call for its length?
                 break;
             default:

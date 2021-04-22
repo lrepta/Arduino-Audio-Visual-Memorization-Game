@@ -13,6 +13,9 @@
 // Need pins 0 and 1 to be reserved for communication from hardware serial to the softwareSerial object we create
 
 // Change these if we want
+const int winLEDPin = 2;
+const int loseLEDPin = 13;
+
 const int shortLEDPin = 3;
 const int longLEDPin = 4;
 
@@ -44,6 +47,9 @@ void setup() {
 
     pinMode(shortLEDPin, OUTPUT);
     pinMode(longLEDPin, OUTPUT);
+
+    pinMode(winLEDPin, OUTPUT);
+    pinMode(loseLEDPin, OUTPUT);
 
     pinMode(soundPin, OUTPUT);
 
@@ -100,6 +106,13 @@ int recordInput() {
         int shortSoundRd = digitalRead(shortSoundBtn);
         int longSoundRd = digitalRead(longSoundBtn);
 
+
+        // Buttons 1 and 2 (short and long LED) are not working correctly
+        // Button 1 very rarely detects presses, and when it does it seems
+        // to select a number 1-4 at random
+        // Button 2 almost seems to cache the last button pressed,
+        // And will output 1 if pressed or 2 at other times
+        // Button 3 and 4 (long and short sound) are working as expected
         if (shortLEDRd == HIGH) {
             userSequence[count] = 1;
             Serial.print((String)userSequence[count] + ", ");
@@ -201,8 +214,11 @@ int recordInput() {
         if (userSequence[count] != 0 && userSequence[count] != sequenceArray[count]) {
                 // User got sequence wrong, so user input stops being read
                 // and we return 0 to the loop function
-                Serial.println("count is: " + (String)(count) + " user: " + (String)(userSequence[count]) + " correct: " + (String)(sequenceArray[count]));
+                Serial.println("\ncount is: " + (String)(count) + " user: " + (String)(userSequence[count]) + " correct: " + (String)(sequenceArray[count]));
                 Serial.println("\nReturning 0 from the recordInput function\n");
+                digitalWrite(loseLEDPin, HIGH);
+                delay(3000);
+                digitalWrite(loseLEDPin, LOW);
                 return 0;
         } else if (userSequence[count] == sequenceArray[count]) {
                 count++;
@@ -216,6 +232,9 @@ int recordInput() {
             // This is sufficient because we check if each
             // input is correct before it is added
             Serial.println("\nReturning 1 from the recordInput function\n");
+            digitalWrite(winLEDPin, HIGH);
+            delay(3000);
+            digitalWrite(winLEDPin, LOW);
             return 1;
         }
 

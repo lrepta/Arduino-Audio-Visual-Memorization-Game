@@ -90,6 +90,7 @@ int recordInput() {
     int longSoundState;
 
     // Should also check that sequence is correct
+    Serial.print("userSequence is: ");
     while(count < 15) {
         delay(100);
         long unsigned int currTime = millis();
@@ -99,69 +100,91 @@ int recordInput() {
         int shortSoundRd = digitalRead(shortSoundBtn);
         int longSoundRd = digitalRead(longSoundBtn);
 
-
-        // Implementation of button debouncing based on arduino built-in
-        // example code:
-        // - https://www.arduino.cc/en/Tutorial/BuiltInExamples/Debounce
-        // If the switch changed, due to noise or pressing:
-        if (
-            prevShortLED != shortLEDRd ||
-            prevLongLED != longLEDRd ||
-            prevShortSound != shortSoundRd ||
-            prevLongSound != longSoundRd
-           ) 
-        {
-            // reset the debouncing timer
-            prevTime = millis();
+        if (shortLEDRd == HIGH) {
+            userSequence[count] = 1;
+            Serial.print((String)userSequence[count] + ", ");
+        } else if (longLEDRd == HIGH) {
+            userSequence[count] = 2;
+            Serial.print((String)userSequence[count] + ", ");
+        } else if (shortSoundRd == HIGH) {
+            userSequence[count] = 3;
+            Serial.print((String)userSequence[count] + ", ");
+        } else if (longSoundRd == HIGH) {
+            userSequence[count] = 4;
+            Serial.print((String)userSequence[count] + ", ");
         }
 
-        if ((millis() - prevTime) > 50) {
-            // whatever the reading is at, it's been there for longer than the debounce
-            // delay, so take it as the actual current state:
 
-            // Check all of the button states, adding them to the
-            // sequence as a valid user input only if the input
-            // has changed since last reading, and the button has been
-            // pressed. Sets the sequence to the equivalent number
-            // representing that input, and updates the counter
-            if (shortLEDRd != shortLEDState) {
-                shortLEDState = shortLEDRd;
-                if (shortLEDState == HIGH) { userSequence[count] = 1; }
-            }
-            else if (longLEDRd != longLEDState) {
-                longLEDState = longLEDRd;
-                if (longLEDState == HIGH) { userSequence[count] = 2; }
-            }
-            else if (shortSoundRd != shortSoundState) {
-                shortSoundState = shortSoundRd;
-                if (shortSoundState == HIGH) { userSequence[count] = 3; }
-            }
-            else if (longSoundRd != longSoundState) {
-                longSoundState = longSoundRd;
-                if (longSoundState == HIGH) { userSequence[count] = 4; }
-            }
+        // // Implementation of button debouncing based on arduino built-in
+        // // example code:
+        // // - https://www.arduino.cc/en/Tutorial/BuiltInExamples/Debounce
+        // // If the switch changed, due to noise or pressing:
+        // if (
+        //     prevShortLED != shortLEDRd ||
+        //     prevLongLED != longLEDRd ||
+        //     prevShortSound != shortSoundRd ||
+        //     prevLongSound != longSoundRd
+        //    ) 
+        // {
+        //     // reset the debouncing timer
+        //     prevTime = millis();
+        // }
 
-            // Not certain this is where we should be testing for equality
-            // Also, should ensure that this code never runs on count = 0
-            if (userSequence[count] != 0 && userSequence[count] != sequenceArray[count]) {
-                // User got sequence wrong, so user input stops being read
-                // and we return 0 to the loop function
-                Serial.println("count is: " + (String)(count) + " user: " + (String)(userSequence[count]) + " correct: " + (String)(sequenceArray[count]));
-                Serial.println("Returning 0 from the recordInput function");
-                return 0;
-            } else {
-                count++;
-                userSequenceLength++;
-            }
-        }
+        // if ((millis() - prevTime) > 50) {
+        //     // whatever the reading is at, it's been there for longer than the debounce
+        //     // delay, so take it as the actual current state:
 
-        // save the reading. Next time through the loop, it'll be the lastButtonState:
-        //lastButtonState = reading;
+        //     // Check all of the button states, adding them to the
+        //     // sequence as a valid user input only if the input
+        //     // has changed since last reading, and the button has been
+        //     // pressed. Sets the sequence to the equivalent number
+        //     // representing that input, and updates the counter
+        //     if (shortLEDRd != shortLEDState) {
+        //         shortLEDState = shortLEDRd;
+                
+        //         if (shortLEDState == HIGH) { userSequence[count] = 1; }
+        //         Serial.print((String)userSequence[count] + ", ");
+        //     }
+        //     else if (longLEDRd != longLEDState) {
+        //         longLEDState = longLEDRd;
+                
+        //         if (longLEDState == HIGH) { userSequence[count] = 2; }
+        //         Serial.print((String)userSequence[count] + ", ");
+        //     }
+        //     else if (shortSoundRd == HIGH) {
+        //         shortSoundState = shortSoundRd;
+                
+        //         if (shortSoundState == HIGH) { userSequence[count] = 3; }
+        //         Serial.print((String)userSequence[count] + ", ");
+        //     }
+        //     else if (longSoundRd != longSoundState) {
+        //         longSoundState = longSoundRd;
+                
+        //         if (longSoundState == HIGH) { userSequence[count] = 4; }
+        //         Serial.print((String)userSequence[count] + ", ");
+        //     }
 
-        shortLEDState = shortLEDRd;
-        longLEDState = longLEDRd;
-        shortSoundState = shortSoundRd;
-        longSoundState = longSoundRd;
+        //     // Not certain this is where we should be testing for equality
+        //     // Also, should ensure that this code never runs on count = 0
+        //     if (userSequence[count] != 0 && userSequence[count] != sequenceArray[count]) {
+        //         // User got sequence wrong, so user input stops being read
+        //         // and we return 0 to the loop function
+        //         Serial.println("count is: " + (String)(count) + " user: " + (String)(userSequence[count]) + " correct: " + (String)(sequenceArray[count]));
+        //         Serial.println("Returning 0 from the recordInput function");
+        //         return 0;
+        //     } else if (userSequence[count] == sequenceArray[count]) {
+        //         count++;
+        //         userSequenceLength++;
+        //     }
+        // }
+
+        // // save the reading. Next time through the loop, it'll be the lastButtonState:
+        // //lastButtonState = reading;
+
+        // shortLEDState = shortLEDRd;
+        // longLEDState = longLEDRd;
+        // shortSoundState = shortSoundRd;
+        // longSoundState = longSoundRd;
 
         // record user input, with proper debouncing etc
 
@@ -174,6 +197,17 @@ int recordInput() {
             // userSequence[count++] = 3;
         // Check if user pressed long sound button
             // userSequence[count++] = 4;
+
+        if (userSequence[count] != 0 && userSequence[count] != sequenceArray[count]) {
+                // User got sequence wrong, so user input stops being read
+                // and we return 0 to the loop function
+                Serial.println("count is: " + (String)(count) + " user: " + (String)(userSequence[count]) + " correct: " + (String)(sequenceArray[count]));
+                Serial.println("Returning 0 from the recordInput function");
+                return 0;
+        } else if (userSequence[count] == sequenceArray[count]) {
+                count++;
+                userSequenceLength++;
+        }
 
         // If we decide to go that route, check if  
         // user pressed submit sequence button
@@ -215,6 +249,10 @@ void createSequenceArray() {
 }
 
 void generateSequence() {
+    for (int i = 0; i < 15; i++) {
+      userSequence[i] = 0;
+      sequenceArray[i] = 0;
+    }
     Serial.println("Entered the generateSequence function");
     randomSeed(analogRead(A5));
     int randomLengthAdjuster = random(0, 3);

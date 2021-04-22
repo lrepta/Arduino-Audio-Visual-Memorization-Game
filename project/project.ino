@@ -202,7 +202,7 @@ int recordInput() {
                 // User got sequence wrong, so user input stops being read
                 // and we return 0 to the loop function
                 Serial.println("count is: " + (String)(count) + " user: " + (String)(userSequence[count]) + " correct: " + (String)(sequenceArray[count]));
-                Serial.println("Returning 0 from the recordInput function");
+                Serial.println("\nReturning 0 from the recordInput function\n");
                 return 0;
         } else if (userSequence[count] == sequenceArray[count]) {
                 count++;
@@ -215,7 +215,7 @@ int recordInput() {
             // User correctly inputted the sequence
             // This is sufficient because we check if each
             // input is correct before it is added
-            Serial.println("Returning 1 from the recordInput function");
+            Serial.println("\nReturning 1 from the recordInput function\n");
             return 1;
         }
 
@@ -242,7 +242,7 @@ int recordInput() {
 // 0 is the uninitialized value, and should never be used
 void createSequenceArray() {
     Serial.println("Entered the createSequencArray function");
-    randomSeed(analogRead(A5));
+    randomSeed(analogRead(A2));
     for (int i = 0; i < sequenceLength; i++) {
         sequenceArray[i] = random(1,5);
     }
@@ -301,7 +301,7 @@ void displaySequence() {
     Serial.print("Sequence is: ");
     for(int i = 0; i < sequenceLength; i++) {
         Serial.print((String)sequenceArray[i] + ", ");
-        delay(200); // Brief pause in between displaying each element of the sequence
+        delay(400); // Brief pause in between displaying each element of the sequence
         switch (sequenceArray[i])
         {
             // short LED flash

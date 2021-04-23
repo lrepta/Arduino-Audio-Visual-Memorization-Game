@@ -3,11 +3,11 @@
 // Timothy Jang
 // Aleksandar Kartelyan
 // 
-// Title - 
+// Title - Audio-Visual Memorization Game
 // Description: 
+// An audio-visual memorization game implemented on the Arduino Uno
 // References: 
-//   - 
-// Assumptions:
+//   - https://www.arduino.cc/en/Tutorial/BuiltInExamples/Debounce
 
 #include <SoftwareSerial.h>
 // Need pins 0 and 1 to be reserved for communication from hardware serial to the softwareSerial object we create
